@@ -1,6 +1,6 @@
 # JSON POST example
 
-A minimum example which sends a HTTP POST with TIdHTTP to the httpbin web service.
+A minimum example which sends a HTTP POST request with TIdHTTP to the httpbin web service.
 
 ## HTTPS support
 
