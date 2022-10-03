@@ -82,4 +82,5 @@ backup
 
 # Free Pascal local files (user-specific info)
 *.lps
+*.lpi
 
