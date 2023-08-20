@@ -5,6 +5,7 @@ Created with Delphi 2009 and Indy 10.6.2
 
 Licensed under the Apache License, Version 2.0 
 
+## Blog articles
 JsonPOST
 see https://mikejustin.wordpress.com/2015/03/14/indy-10-6-https-post/
 
