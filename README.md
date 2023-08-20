@@ -7,10 +7,12 @@ Licensed under the Apache License, Version 2.0
 
 ## Blog articles
 JsonPOST
-see https://mikejustin.wordpress.com/2015/03/14/indy-10-6-https-post/
+* https://mikejustin.wordpress.com/2015/03/14/indy-10-6-https-post/
 
 ServerPush
-see https://mikejustin.wordpress.com/2014/04/19/indy-10-tidtcpserver-server-side-message-push-example/
+* https://mikejustin.wordpress.com/2014/04/19/indy-10-tidtcpserver-server-side-message-push-example/
 
 SSE - Server-Sent Events
-see https://mikejustin.wordpress.com/2022/09/28/how-to-server-sent-events-with-indy-http-server-part-3/
+* https://mikejustin.wordpress.com/2022/09/17/how-to-server-sent-events-with-indy-http-server-part-1/
+* https://mikejustin.wordpress.com/2022/09/23/how-to-server-sent-events-with-indy-http-server-part-2/
+* https://mikejustin.wordpress.com/2022/09/28/how-to-server-sent-events-with-indy-http-server-part-3/
