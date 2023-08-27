@@ -6,6 +6,10 @@ Created with Delphi 2009 and Indy 10.6.2
 Licensed under the Apache License, Version 2.0 
 
 ## Blog articles
+
+InvertedRequestResponse
+* https://mikejustin.wordpress.com/2023/08/27/inverted-request-respose-example-built-with-the-indy-tcp-socket-library/
+
 JsonPOST
 * https://mikejustin.wordpress.com/2015/03/14/indy-10-6-https-post/
 
