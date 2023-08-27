@@ -61,7 +61,7 @@ uses
   IdGlobal, StrUtils;
 
 const
-  READ_TIMEOUT = 200;
+  READ_TIMEOUT = 100;
 
 {$R *.dfm}
 
@@ -98,17 +98,24 @@ end;
 constructor TMyTCPServer.Create(AServerLog: TStrings; ARequestHolder: TEdit);
 begin
   inherited Create;
+
   FServerLog := AServerLog;
   FServerRequestHolder := ARequestHolder;
 end;
 
 procedure TMyTCPServer.LogInMainThread(Line1, Line2: string);
 begin
-  TThread.Synchronize(nil,
+  Writeln('Server', Line1, Line2);
+  TThread.Queue(nil,
    procedure
    begin
-     FServerLog.Append('Request: ' + Line1);
-     FServerLog.Append('Response: ' + Line2);
+     if Line1='...' then
+     begin
+       FServerLog.Append('.');
+     end else begin
+       FServerLog.Append('Request: ' + Line1);
+       FServerLog.Append('Response: ' + Line2);
+     end;
   end);
 end;
 
@@ -119,33 +126,32 @@ var
 begin
   Result := inherited;
 
-  AContext.Connection.IOHandler.CheckForDisconnect(True);
+  AContext.Connection.IOHandler.ReadTimeout := READ_TIMEOUT;
 
-  // server receives request from client and sends response to client
-  // if AContext.Connection.IOHandler.CheckForDataOnSource(READ_TIMEOUT) then
-  begin
-    Request := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_UTF8);
-    if Request <> '' then
-    begin
-      Response := ReverseString(Request);
-      LogInMainThread(Request, Response);
-      AContext.Connection.IOHandler.WriteLn(Response);
-    end;
-    Exit;
-  end;
-
-  // server sends request to client and receives response from client
   if Send then
   begin
+    // server sends request to client and receives response from client
     Send := False;
-    Request := FServerRequestHolder.Text;
+    Request := 'REQ:' + FServerRequestHolder.Text;
     AContext.Connection.IOHandler.WriteLn(Request);
-    Response := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_UTF8);
-    if AContext.Connection.IOHandler.ReadLnTimedout then
-      LogInMainThread(Request, '* read timed out *')
-    else
-      LogInMainThread(Request, Response);
+    repeat
+      Response := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_UTF8);
+    until Response <> '';
+    LogInMainThread(Request, Response);
+  end
+  else
+  begin
+    // server receives request from client and sends response to client
+    Request := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_UTF8);
+    if StartsStr('REQ:', Request) then
+    begin
+      Response := ReverseString(Request);
+      AContext.Connection.IOHandler.WriteLn(Response);
+      //LogInMainThread(Request, Response);
+    end;
   end;
+
+  Sleep(1000);
 end;
 
 { TMyTCPClientThread }
@@ -170,11 +176,18 @@ end;
 
 procedure TMyTCPClientThread.LogInMainThread(Line1, Line2: string);
 begin
-  TThread.Synchronize(nil,
+  Writeln('Client: ', Line1, Line2);
+
+  TThread.Queue(nil,
   procedure
   begin
-     FClientLog.Append('Request: ' + Line1);
-     FClientLog.Append('Response: ' + Line2);
+     if Line1='...' then
+     begin
+       FClientLog.Append('.');
+     end else begin
+       FClientLog.Append('Request: ' + Line1);
+       FClientLog.Append('Response: ' + Line2);
+     end
   end);
 end;
 
@@ -187,27 +200,30 @@ begin
 
   while not Terminated do
   begin
-    // receive request from server and send response
-    Request := TCPClient.IOHandler.ReadLn(IndyTextEncoding_UTF8);
-    if Request <> '' then
-    begin
-      Response := ReverseString(Request);
-      TCPClient.IOHandler.WriteLn(Response);
-      LogInMainThread(Request, Response);
-    end;
-
     if Send then
     begin
-      Send := False;
       // send request to server and receive response
-      Request := FClientRequestHolder.Text;
+      Send := False;
+      Request := 'REQ:' + FClientRequestHolder.Text;
       TCPClient.IOHandler.WriteLn(Request);
-      Response := TCPClient.IOHandler.ReadLn(IndyTextEncoding_UTF8);
-      if TCPClient.IOHandler.ReadLnTimedout then
-        LogInMainThread(Request, '* read timed out *')
-      else
-        LogInMainThread(Request, Response);
+      repeat
+        Response := TCPClient.IOHandler.ReadLn(IndyTextEncoding_UTF8);
+      until Response <> '';
+      LogInMainThread(Request, Response);
     end
+    else
+    begin
+      // receive request from server and send response
+      Request := TCPClient.IOHandler.ReadLn(IndyTextEncoding_UTF8);
+      if StartsStr('REQ:', Request) then
+      begin
+        Response := ReverseString(Request);
+        TCPClient.IOHandler.WriteLn(Response);
+        // LogInMainThread(Request, Response);
+      end;
+    end;
+
+    Sleep(100);
   end;
 
   TCPClient.Disconnect;
