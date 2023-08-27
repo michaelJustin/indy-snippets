@@ -1,7 +1,5 @@
 program Example;
 
-{$APPTYPE CONSOLE}
-
 uses
   Forms,
   Unit1 in 'Unit1.pas' {ExampleForm};

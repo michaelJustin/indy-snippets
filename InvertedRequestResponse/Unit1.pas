@@ -105,17 +105,11 @@ end;
 
 procedure TMyTCPServer.LogInMainThread(Line1, Line2: string);
 begin
-  Writeln('Server', Line1, Line2);
   TThread.Queue(nil,
-   procedure
-   begin
-     if Line1='...' then
-     begin
-       FServerLog.Append('.');
-     end else begin
-       FServerLog.Append('Request: ' + Line1);
-       FServerLog.Append('Response: ' + Line2);
-     end;
+  procedure
+  begin
+    FServerLog.Append('Request: ' + Line1);
+    FServerLog.Append('Response: ' + Line2);
   end);
 end;
 
@@ -147,11 +141,10 @@ begin
     begin
       Response := ReverseString(Request);
       AContext.Connection.IOHandler.WriteLn(Response);
-      //LogInMainThread(Request, Response);
     end;
   end;
 
-  Sleep(1000);
+  Sleep(100);
 end;
 
 { TMyTCPClientThread }
@@ -176,18 +169,11 @@ end;
 
 procedure TMyTCPClientThread.LogInMainThread(Line1, Line2: string);
 begin
-  Writeln('Client: ', Line1, Line2);
-
   TThread.Queue(nil,
   procedure
   begin
-     if Line1='...' then
-     begin
-       FClientLog.Append('.');
-     end else begin
-       FClientLog.Append('Request: ' + Line1);
-       FClientLog.Append('Response: ' + Line2);
-     end
+    FClientLog.Append('Request: ' + Line1);
+    FClientLog.Append('Response: ' + Line2);
   end);
 end;
 
@@ -219,7 +205,6 @@ begin
       begin
         Response := ReverseString(Request);
         TCPClient.IOHandler.WriteLn(Response);
-        // LogInMainThread(Request, Response);
       end;
     end;
 
