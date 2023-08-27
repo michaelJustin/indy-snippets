@@ -139,7 +139,7 @@ begin
     Request := AContext.Connection.IOHandler.ReadLn(IndyTextEncoding_UTF8);
     if StartsStr('REQ:', Request) then
     begin
-      Response := ReverseString(Request);
+      Response := 'from server ' + ReverseString(Request);
       AContext.Connection.IOHandler.WriteLn(Response);
     end;
   end;
@@ -203,7 +203,7 @@ begin
       Request := TCPClient.IOHandler.ReadLn(IndyTextEncoding_UTF8);
       if StartsStr('REQ:', Request) then
       begin
-        Response := ReverseString(Request);
+        Response := 'from client ' + ReverseString(Request);
         TCPClient.IOHandler.WriteLn(Response);
       end;
     end;
